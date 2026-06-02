@@ -1,0 +1,15 @@
+{{- if .Values.mongodb.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    app: mongodb
+spec:
+  ports:
+  - port: {{ .Values.mongodb.containerPort }}
+    targetPort: {{ .Values.mongodb.containerPort }}
+  selector:
+    app: mongodb
+  clusterIP: None
+{{- end }}

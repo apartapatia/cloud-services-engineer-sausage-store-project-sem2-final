@@ -1,0 +1,26 @@
+postgresql:
+  enabled: true
+  image: postgres:14-alpine
+  containerPort: 5432
+  service:
+    name: postgresql
+    port: 5432
+  persistence:
+    size: 5Gi
+  env:
+    POSTGRES_USER: postgres
+    STORE_DATABASE: sausage_store
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "1"
+
+mongodb:
+  enabled: true
+  image: mongo:7.0
+  env:
+    MONGO_INITDB_ROOT_USERNAME: root
+  containerPort: 27017

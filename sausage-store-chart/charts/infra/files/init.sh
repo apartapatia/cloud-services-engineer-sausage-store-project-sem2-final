@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+  DO \$\$
+  BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '${STORE_USER}') THEN
+      CREATE ROLE ${STORE_USER} WITH LOGIN PASSWORD '${STORE_PASSWORD}';
+    END IF;
+  END
+  \$\$;
+
+  SELECT 'CREATE DATABASE ${STORE_DATABASE} OWNER ${STORE_USER}'
+  WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${STORE_DATABASE}')\gexec
+EOSQL

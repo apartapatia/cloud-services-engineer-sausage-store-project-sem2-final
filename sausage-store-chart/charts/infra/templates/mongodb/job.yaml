@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-mongodb-setup
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: mongo-setup
+        image: mongo:5.0
+        env:
+          - name: MONGO_ROOT_USER
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: root-username
+          - name: MONGO_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: root-password
+          - name: MONGO_APP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.vault.name }}
+                key: spring.data.mongodb.password
+        command:
+        - /bin/bash
+        - -c
+        - |
+          mongo --host mongodb -u $MONGO_ROOT_USER -p $MONGO_ROOT_PASSWORD --authenticationDatabase admin sausage-store --eval "db.createUser({user: \"reports\", pwd: \"$MONGO_APP_PASSWORD\", roles: [{ role: \"readWrite\", db: \"sausage-store\" }]});"
+      restartPolicy: OnFailure

@@ -1,13 +1,10 @@
 global:
   imagePullPolicy: Always
-  ###vault:
-  ###  host: ip
-  ###  name: vault
-  ###  vaultToken: someToken
-
+  vault:
+    host: ""
+    name: vault
 
 frontend:
-### В чарте frontend отсутствуют некоторые важные файлы. Поймите какие и опишите их.
   replicas: 1
   revisionHistoryLimit: 15
   strategy:
@@ -15,18 +12,18 @@ frontend:
   service:
     port: 80
   ingress:
-    host: YOUR_STUDENT_HOSTNAME.students-projects.ru # Корректный домен будет указан в задании
+    host: "<YOUR_HOSTNAME>.students-projects.ru"
     path: /
     pathType: Prefix
   containerPort: 80
-  image: YOUR_DOCKERHUB/sausage-frontend:latest
+  image: "YOUR_DOCKERHUB/sausage-frontend:latest"
   resources:
     requests:
       memory: "128Mi"
       cpu: "100m"
     limits:
       memory: "128Mi"
-      cpu: "1"
+      cpu: "500m"
   nginxConf: nginx.conf
 
 backend:
@@ -35,9 +32,7 @@ backend:
     port: "8080"
     scrape: "true"
   env:
-    postgresUri: jdbc:postgresql://postgresql:5432/sausage-store
-    postgresUser: store
-    postgresPassword: storepassword
+    postgresUri: jdbc:postgresql://postgresql:5432/sausage_store
     reportPath: /logs/reports
     logPath: /logs
   service:
@@ -45,8 +40,11 @@ backend:
   revisionHistoryLimit: 15
   replicas: 1
   strategy:
-  ### Опишите стратегию RollingUpdate для бэкенда
-  image: YOUR_DOCKERHUB/sausage-backend:latest
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  image: "YOUR_DOCKERHUB/sausage-backend:latest"
   imagePullPolicy: Always
   resources:
     requests:
@@ -57,22 +55,46 @@ backend:
       cpu: "1"
   containerPort: 8080
   livenessProbe:
-  ### Опишите LivenessProbe для бэкенда
+    httpGet:
+      path: /actuator/health
+      port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
   vpa:
-  ### Опишите VPA для бэкенда
+    updatePolicy:
+      updateMode: "Off"
+    resourcePolicy:
+      containerPolicies:
+        - containerName: '*'
+          minAllowed:
+            cpu: 100m
+            memory: 256Mi
+          maxAllowed:
+            cpu: 1
+            memory: 512Mi
 
 backend-report:
-### Опишите значения для backend-report
-### Приложение должно использовать стратегию Recreate
-### Приложение использует переменную PORT - порт, на котором оно запустится и DB - Uri-подключение к mongodb. 
-### DB положите в Secret, PORT в ConfigMap
-### Опишите HPA для backend-report
-
-infra:
-  postgresql:
-  ### Опишите необходимые переменные для развертывания PostgresQL в кластере Kubernetes
-  mongodb:
-    env:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
-    containerPort: 27017
+  replicas: 1
+  revisionHistoryLimit: 15
+  strategy:
+    type: Recreate
+  image: "YOUR_DOCKERHUB/sausage-backend-report:latest"
+  containerPort: 8080
+  service:
+    port: 8080
+  env:
+    port: "8080"
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+  hpa:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
