@@ -8,11 +8,13 @@ WORKDIR /usr/src/app
 
 COPY pom.xml ./
 
+ARG VERSION=0.0.1-SNAPSHOT
+
 RUN mvn dependency:go-offline
 
 COPY ./src ./src
 
-RUN mvn package -DskipTests \
+RUN mvn package -DskipTests -Drevision=${VERSION} \
     && cp target/sausage-store-*.jar target/app.jar
 
 # =========================================

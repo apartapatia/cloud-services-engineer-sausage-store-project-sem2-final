@@ -37,14 +37,15 @@ jobs:
           with:
             username: ${{ secrets.DOCKER_USER }}
             password: ${{ secrets.DOCKER_PASSWORD }}
-            # Хорошо ли держать логин и пароль прямо в коде workflow?
-            # Нет, это нехорошо. Хранить пароль надо в Secrets.
+            
         - name: Push Backend to DockerHub
           uses: docker/build-push-action@v4
           with:
             context: ./backend/
             push: true
-            tags: ${{ secrets.DOCKER_USER }}/sausage-backend:latest
+            tags: |
+              ${{ secrets.DOCKER_USER }}/sausage-backend:latest
+              ${{ secrets.DOCKER_USER }}/sausage-backend:${{ github.sha }}
             build-args: |
               VERSION=${{ github.sha }}
               
@@ -53,14 +54,18 @@ jobs:
           with:
             context: ./frontend/
             push: true
-            tags: ${{ secrets.DOCKER_USER }}/sausage-frontend:latest
+            tags: |
+              ${{ secrets.DOCKER_USER }}/sausage-frontend:latest
+              ${{ secrets.DOCKER_USER }}/sausage-frontend:${{ github.sha }}
             
         - name: Push Backend-report to DockerHub
           uses: docker/build-push-action@v4
           with:
             context: ./backend-report/
             push: true
-            tags: ${{ secrets.DOCKER_USER }}/sausage-backend-report:latest
+            tags: |
+              ${{ secrets.DOCKER_USER }}/sausage-backend-report:latest
+              ${{ secrets.DOCKER_USER }}/sausage-backend-report:${{ github.sha }}
 
   # Упаковываем helm-чарт и пушим его в Nexus
   add_helm_chart_to_nexus:
