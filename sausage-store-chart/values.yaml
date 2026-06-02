@@ -12,7 +12,7 @@ frontend:
     host: "<YOUR_HOSTNAME>.students-projects.ru"
     path: /
     pathType: Prefix
-  containerPort: 80
+  containerPort: 8080
   image: "YOUR_DOCKERHUB/sausage-frontend:latest"
   resources:
     requests:
