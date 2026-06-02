@@ -42,7 +42,10 @@ spec:
             - name: SPRING_DATASOURCE_USERNAME
               value: {{ .Values.env.postgresUser }}
             - name: SPRING_DATASOURCE_PASSWORD
-              value: {{ .Values.env.postgresPassword }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.postgresSecretName }}
+                  key: {{ .Values.env.postgresSecretKey }}
             - name: SPRING_CLOUD_VAULT_ENABLED
               value: "false"
             - name: REPORT_PATH

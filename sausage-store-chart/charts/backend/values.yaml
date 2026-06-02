@@ -16,6 +16,8 @@ resources:
 env:
   postgresUri: jdbc:postgresql://postgresql:5432/sausage_store
   postgresUser: store
+  postgresSecretName: postgresql-secret
+  postgresSecretKey: store-password
   reportPath: /logs/reports
   logPath: /logs
 livenessProbe:

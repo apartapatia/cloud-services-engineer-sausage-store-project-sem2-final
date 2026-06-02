@@ -24,14 +24,19 @@ spec:
               secretKeyRef:
                 name: mongodb-secret
                 key: root-password
+          - name: MONGO_APP_USER
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: app-username
           - name: MONGO_APP_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.vault.name }}
-                key: spring.data.mongodb.password
+                name: mongodb-secret
+                key: app-password
         command:
         - /bin/bash
         - -c
         - |
-          mongo --host mongodb -u $MONGO_ROOT_USER -p $MONGO_ROOT_PASSWORD --authenticationDatabase admin sausage-store --eval "db.createUser({user: \"reports\", pwd: \"$MONGO_APP_PASSWORD\", roles: [{ role: \"readWrite\", db: \"sausage-store\" }]});"
+          mongo --host mongodb -u "$MONGO_ROOT_USER" -p "$MONGO_ROOT_PASSWORD" --authenticationDatabase admin sausage-store --eval "db.createUser({user: \"$MONGO_APP_USER\", pwd: \"$MONGO_APP_PASSWORD\", roles: [{ role: \"readWrite\", db: \"sausage-store\" }]});"
       restartPolicy: OnFailure

@@ -33,8 +33,18 @@ spec:
                 configMapKeyRef:
                   name: {{ .Release.Name }}-{{ .Chart.Name }}-conf
                   key: port
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.mongoSecretName }}
+                  key: {{ .Values.env.mongoUserKey }}
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.mongoSecretName }}
+                  key: {{ .Values.env.mongoPasswordKey }}
             - name: DB
-              value: "mongodb://admin:rootpassword@mongodb:27017/admin"
+              value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@{{ .Values.env.mongoHost }}/{{ .Values.env.mongoDatabase }}?authSource={{ .Values.env.mongoDatabase }}"
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           ports:

@@ -32,6 +32,16 @@ spec:
                   key: postgres-password
             - name: STORE_DATABASE
               value: {{ .Values.postgresql.env.STORE_DATABASE }}
+            - name: STORE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secret
+                  key: store-user
+            - name: STORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secret
+                  key: store-password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           volumeMounts:
