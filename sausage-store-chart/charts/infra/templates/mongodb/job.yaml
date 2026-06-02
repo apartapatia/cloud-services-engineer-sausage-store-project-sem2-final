@@ -38,7 +38,15 @@ spec:
         - /bin/bash
         - -c
         - |
-          mongo --host mongodb -u "$MONGO_ROOT_USER" -p "$MONGO_ROOT_PASSWORD" --authenticationDatabase admin sausage-store --eval "db.createUser({user: \"$MONGO_APP_USER\", pwd: \"$MONGO_APP_PASSWORD\", roles: [{ role: \"readWrite\", db: \"sausage-store\" }]});"
+          mongo --host mongodb -u "$MONGO_ROOT_USER" -p "$MONGO_ROOT_PASSWORD" --authenticationDatabase admin sausage-store --eval "
+            if (db.getUser(\"$MONGO_APP_USER\") == null) {
+              db.createUser({user: \"$MONGO_APP_USER\", pwd: \"$MONGO_APP_PASSWORD\", roles: [{ role: \"readWrite\", db: \"sausage-store\" }]});
+              print(\"user created\");
+            } else {
+              db.updateUser(\"$MONGO_APP_USER\", {pwd: \"$MONGO_APP_PASSWORD\", roles: [{ role: \"readWrite\", db: \"sausage-store\" }]});
+              print(\"user already exists, updated\");
+            }
+          "
         resources:
           requests:
             memory: "64Mi"
