@@ -87,7 +87,10 @@ jobs:
           run: |
             helm package ./sausage-store-chart
             CHART_PKG=$(ls sausage-store-*.tgz)
-            curl -u "${{ env.NEXUS_HELM_REPO_USER }}:${{ env.NEXUS_HELM_REPO_PASSWORD }}" ${{ env.NEXUS_HELM_REPO }} --upload-file $CHART_PKG
+            REPO_URL="${NEXUS_HELM_REPO%/}/"
+            curl --fail -i \
+              -u "${NEXUS_HELM_REPO_USER}:${NEXUS_HELM_REPO_PASSWORD}" \
+              "${REPO_URL}" --upload-file "${CHART_PKG}"
 
   # Деплоим приложения в кластер Kubernetes с помощью helm-чарт
   deploy_helm_chart_to_kubernetes:
