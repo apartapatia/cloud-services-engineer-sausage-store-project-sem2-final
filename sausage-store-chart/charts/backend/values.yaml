@@ -12,7 +12,7 @@ resources:
     cpu: "100m"
   limits:
     memory: "512Mi"
-    cpu: "1"
+    cpu: "750m"
 env:
   postgresUri: jdbc:postgresql://postgresql:5432/sausage_store
   postgresUser: store
