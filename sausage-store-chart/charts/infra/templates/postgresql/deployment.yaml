@@ -30,16 +30,6 @@ spec:
                 secretKeyRef:
                   name: postgresql-secret
                   key: postgres-password
-            - name: STORE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.global.vault.name }}
-                  key: spring.datasource.username
-            - name: STORE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.global.vault.name }}
-                  key: spring.datasource.password
             - name: STORE_DATABASE
               value: {{ .Values.postgresql.env.STORE_DATABASE }}
             - name: PGDATA

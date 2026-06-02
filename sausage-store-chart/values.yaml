@@ -1,8 +1,5 @@
 global:
   imagePullPolicy: Always
-  vault:
-    host: ""
-    name: vault
 
 frontend:
   replicas: 1
@@ -35,6 +32,8 @@ backend:
     postgresUri: jdbc:postgresql://postgresql:5432/sausage_store
     reportPath: /logs/reports
     logPath: /logs
+    postgresUser: "store"
+    postgresPassword: "storepassword"
   service:
     port: 8080
   revisionHistoryLimit: 15

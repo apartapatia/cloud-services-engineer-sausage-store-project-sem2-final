@@ -34,10 +34,7 @@ spec:
                   name: {{ .Release.Name }}-{{ .Chart.Name }}-conf
                   key: port
             - name: DB
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.global.vault.name }}
-                  key: spring.data.mongodb.uri
+              value: "mongodb://admin:rootpassword@mongodb:27017/admin"
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           ports:

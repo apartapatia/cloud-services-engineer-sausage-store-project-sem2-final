@@ -18,10 +18,8 @@ env:
   NEXUS_HELM_REPO_PASSWORD: ${{ secrets.NEXUS_HELM_REPO_PASSWORD }}
   SAUSAGE_STORE_NAMESPACE: r-devops-magistracy-project-2sem-1716536500
   KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-  VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
   DOCKER_USER: ${{ secrets.DOCKER_USER }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  VAULT_HOST: ${{ vars.VAULT_HOST }}
   INGRESS_HOST: ${{ vars.INGRESS_HOST }}
 
 jobs:
@@ -113,8 +111,6 @@ jobs:
 
             helm upgrade --install sausage-store ./sausage-store-chart \
               --namespace ${{ env.SAUSAGE_STORE_NAMESPACE }} \
-              --set global.vault.host=${{ env.VAULT_HOST }} \
-              --set global.vault.vaultToken=${{ env.VAULT_TOKEN }} \
               --set frontend.image=${{ env.DOCKER_USER }}/sausage-frontend:${{ github.sha }} \
               --set backend.image=${{ env.DOCKER_USER }}/sausage-backend:${{ github.sha }} \
               --set backend-report.image=${{ env.DOCKER_USER }}/sausage-backend-report:${{ github.sha }} \
