@@ -6,7 +6,7 @@ postgresql:
     name: postgresql
     port: 5432
   persistence:
-    size: 5Gi
+    size: 3Gi
   env:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: postgrespassword
