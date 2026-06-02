@@ -39,4 +39,11 @@ spec:
         - -c
         - |
           mongo --host mongodb -u "$MONGO_ROOT_USER" -p "$MONGO_ROOT_PASSWORD" --authenticationDatabase admin sausage-store --eval "db.createUser({user: \"$MONGO_APP_USER\", pwd: \"$MONGO_APP_PASSWORD\", roles: [{ role: \"readWrite\", db: \"sausage-store\" }]});"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
       restartPolicy: OnFailure
