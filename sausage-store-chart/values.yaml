@@ -58,10 +58,10 @@ backend:
     httpGet:
       path: /actuator/health
       port: 8080
-    initialDelaySeconds: 15
-    periodSeconds: 30
+    initialDelaySeconds: 60
+    periodSeconds: 15
     timeoutSeconds: 5
-    failureThreshold: 3
+    failureThreshold: 6
   vpa:
     updatePolicy:
       updateMode: "Off"
