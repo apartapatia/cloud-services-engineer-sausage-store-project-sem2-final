@@ -37,8 +37,8 @@ data:
               try_files $uri $uri/ /index.html;
           }
 
-            location /api {
-              set $backend_upstream http://{{ .Release.Name }}-backend-service:8080;
+          location /api {
+              set $backend_upstream http://{{ .Release.Name }}-backend-service.{{ .Release.Namespace }}.svc.cluster.local:8080;
               proxy_pass $backend_upstream;
           }
 
