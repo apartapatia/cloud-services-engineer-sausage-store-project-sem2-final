@@ -1,0 +1,3 @@
+vm_ips = {                                                                                                                                …/cloud-services-engineer-sausage-store-project-sem2-final/terraform  22:14
+  "vault-vm" = "62.84.125.216"
+}
